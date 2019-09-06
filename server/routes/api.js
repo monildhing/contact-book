@@ -152,11 +152,13 @@ router.post('/login', (req, res) => {
         }
     })
 })
-router.delete('/delete/:id', function (req, res, next) {
+router.post('/delete', function (req, res, next) {
    deletecontact(req, res);
 });
 async function deletecontact(req, res) {
-    Contact.findByIdAndRemove(req.params.id, function (err) {
+    console.log(req.body,"delete");
+    
+    User.findOneAndUpdate({'contact._id': req.body.id._id},{$pull: { contact: { $in: req.body.id._id } }} ,function (err) {
         if (err) return next(err);
         res.send('Deleted successfully!');
     })

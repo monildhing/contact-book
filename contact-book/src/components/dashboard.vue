@@ -22,15 +22,28 @@
             <form>
               <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" v-model="editedContact.name" class="form-control" id="name" />
+                <input type="text" v-model="editedContact.name" class="form-control" id="name" :class="{ 'is-invalid':submitted && $v.editedContact.name.$error }" />
+                <div v-if=" !$v.editedContact.name.error" class="invalid-feedback">
+                <span v-if="!$v.editedContact.name.required">Name is required</span>
+                <span v-if="!$v.editedContact.name.minLength">Name must be at least 3 characters</span>
+                <span v-if="!$v.editedContact.name.maxLength">Name can't be more than 20 charcters</span>
+              </div>
               </div>
               <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" v-model="editedContact.phone" class="form-control" id="phone" />
+                <input type="text" v-model="editedContact.phone" class="form-control" id="phone"  :class="{ 'is-invalid':submitted && $v.editedContact.phone.$error }" />
+                   <div v-if="!$v.editedContact.phone.error" class="invalid-feedback">
+                    <span v-if="!$v.editedContact.phone.required">contact is required</span>
+                    <span v-if="!$v.editedContact.phone.alpha">contact must valid</span>
+                  </div>
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" v-model="editedContact.email" class="form-control" id="email" />
+                <input type="email" v-model="editedContact.email" class="form-control" id="email" :class="{ 'is-invalid':submitted && $v.editedContact.email.$error }"/>
+                   <div v-if="$v.editedContact.email.$error" class="invalid-feedback">
+                    <span v-if="!$v.editedContact.email.required">Email is required</span>
+                    <span v-if="!$v.editedContact.email.email">Email is invalid</span>
+                  </div>
               </div>
               <div class="form-group">
                 <label for="address">Address</label>
@@ -48,7 +61,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="save(editedContact)"
+              v-on:click="handleSubmit(e)"
             >Save changes</button>
           </div>
         </div>
@@ -76,15 +89,28 @@
             <form>
               <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" v-model="addContact.name" class="form-control" id="name" />
+                <input type="text" v-model="addContact.name" class="form-control" id="name" :class="{ 'is-invalid':submitted && $v.addContact.name.$error }"  />
+                <div v-if=" !$v.addContact.name.error" class="invalid-feedback">
+                  <span v-if="!$v.addContact.name.required">Name is required</span>
+                  <span v-if="!$v.addContact.name.minLength">Name must be at least 3 characters</span>
+                  <span v-if="!$v.addContact.name.maxLength">Name can't be more than 20 charcters</span>
+                </div>
               </div>
               <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" v-model="addContact.phone" class="form-control" id="phone" />
+                <input type="text" v-model="addContact.phone" class="form-control" id="phone"  :class="{ 'is-invalid':submitted && $v.addContact.phone.$error }" />
+                 <div v-if="!$v.addContact.phone.error" class="invalid-feedback">
+                  <span v-if="!$v.addContact.phone.required">contact is required</span>
+                  <span v-if="!$v.addContact.phone.alpha">contact must valid</span>
+                </div>
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" v-model="addContact.email" class="form-control" id="email" />
+                <input type="email" v-model="addContact.email" class="form-control" id="email" :class="{ 'is-invalid':submitted && $v.addContact.email.$error }" />
+                <div v-if="$v.addContact.email.$error" class="invalid-feedback">
+                  <span v-if="!$v.addContact.email.required">Email is required</span>
+                  <span v-if="!$v.addContact.email.email">Email is invalid</span>
+                </div>
               </div>
               <div class="form-group">
                 <label for="address">Address</label>
@@ -97,7 +123,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="addcontact(addContact)"
+              v-on:click="handleAddSubmit(e)"
             >Save changes</button>
           </div>
         </div>
@@ -189,13 +215,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="contact in filterContacts" data-toggle="modal" data-target="#exampleModal2" v-on:click="editContact(contact)">
-              <td>
+            <tr v-for="contact in filterContacts"  v-on:click="editContact(contact)">
+              <td data-toggle="modal" data-target="#exampleModal2">
                 <strong class="contact-name">{{contact.name}}</strong>
               </td>
-              <td>{{contact.phone}}</td>
-              <td>{{contact.email}}</td>
-              <td>{{contact.address}}</td>
+              <td data-toggle="modal" data-target="#exampleModal2">{{contact.phone}}</td>
+              <td data-toggle="modal" data-target="#exampleModal2">{{contact.email}}</td>
+              <td data-toggle="modal" data-target="#exampleModal2">{{contact.address}}</td>
               <td>
                 <button
                   type="button"
@@ -204,7 +230,7 @@
                   data-target="#exampleModal"
                   v-on:click="editContact(contact)"
                 ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button>
-                <button class="btn btn-primary" v-on:click="deleteContact(contact._id)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+                <button class="btn btn-primary" v-on:click="deleteContact(contact)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
                 <!-- <button class="btn-c" v-on:click="editContact(contact)">Edit</button> -->
               </td>
             </tr>
@@ -216,7 +242,8 @@
 </template>
 
 <script>
-
+import {  required, email, minLength, maxLength,helpers  } from 'vuelidate/lib/validators'
+const alpha = helpers.regex('alpha', /\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*/)
 
 export default {
   name: "dashboard",
@@ -225,6 +252,8 @@ export default {
       
       contacts: [],
       search: "",
+      e:"",
+      submitted:"false",
       contact: {
         name: "",
         phone: "",
@@ -248,6 +277,21 @@ export default {
       sortDirection: "ASC",
       // alphabets:['A','B','C','D','E','F','G','H','I','J','K']
     };
+  },
+  validations:{
+    editedContact: {
+        name: {required,minLength:minLength(3),maxLength:maxLength(20)},
+        phone: {required,alpha},
+        address: {},
+        email: {email,required}
+      },
+       addContact: {
+         name: {required,minLength:minLength(3),maxLength:maxLength(20)},
+        phone: {required,alpha},
+        address: {},
+        email: {email,required}
+      },
+
   },
 
   created() {
@@ -278,10 +322,30 @@ export default {
         }.bind(this)
       );
     },
+    handleSubmit:function(e) {
+     this.submitted = true;
+     // stop here if form is invalid
+     this.$v.editedContact.$touch();
+     if (this.$v.editedContact.$invalid) {
+       return;
+     }
+     this.save(this.editContact);
+   },
+   handleAddSubmit:function(e) {
+     this.submitted = true;
+     // stop here if form is invalid
+     this.$v.addContact.$touch();
+     if (this.$v.addContact.$invalid) {
+       return;
+     }
+     this.addcontact(this.addContact);
+   },
     deleteContact: function(id) {
       console.log(id);
-      let url = "http://localhost:3000/api/delete/" + id;
-      this.$http.delete(url).then(() => {
+      let url = "http://localhost:3000/api/delete/" ;
+      this.$http.post(url, {
+          id
+        }).then(() => {
         this.getContacts();
         // this.$http
         // .get("http://localhost:3000/api/getcontact")
