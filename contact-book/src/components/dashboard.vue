@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <div v-for="alpha in alphabets">{{alpha}}</div> -->
     <!-- Toggle Update Contact -->
     <div
       class="modal fade"
@@ -132,8 +133,34 @@
     </div>
 
     <!-- Contact Dashboard -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#"><i class="fa fa-address-book" aria-hidden="true"></i>Contactbook</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+       <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#exampleModal1"
+        ><i class="fa fa-user-plus" aria-hidden="true"></i></button>
+      </li>
+      <li class="nav-item">    
+        <button  class="btn btn-primary" v-on:click="logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" v-model="search"  >
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
     <div class="header">
-      <a href="#default" class="logo">contact-book</a>
+      <!-- <a href="#default" class="logo">contact-book</a>
       <div class="header-right">
         <button
           type="button"
@@ -142,10 +169,10 @@
           data-target="#exampleModal1"
         >Add Contact</button>
         <!-- <a v-on:click="addContact">Add Contact</a> -->
-        <a v-on:click="logout">Logout</a>
-        <input type="text" v-model="search" placeholder="search contact" />
+        <!-- <a v-on:click="logout">Logout</a>
+        <input type="text" v-model="search" placeholder="search contact" /> -->
         <!-- <button @click="filteredContacts">click</button> -->
-      </div>
+      <!-- </div> --> 
     </div>
     <br />
     <div class="main">
@@ -176,8 +203,8 @@
                   data-toggle="modal"
                   data-target="#exampleModal"
                   v-on:click="editContact(contact)"
-                >Edit</button>
-                <button class="btn-c" v-on:click="deleteContact(contact._id)">Delete</button>
+                ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button>
+                <button class="btn btn-primary" v-on:click="deleteContact(contact._id)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
                 <!-- <button class="btn-c" v-on:click="editContact(contact)">Edit</button> -->
               </td>
             </tr>
@@ -189,12 +216,13 @@
 </template>
 
 <script>
-import { log } from "util";
+
 
 export default {
   name: "dashboard",
   data() {
     return {
+      
       contacts: [],
       search: "",
       contact: {
@@ -207,24 +235,30 @@ export default {
         name: "",
         phone: "",
         address: "",
-        email: ""
+        email: "",
+        uemail:''
       },
       addContact: {
         name: "",
         phone: "",
         address: "",
-        email: ""
+        email: "",
+        uemail:""
       },
-      sortDirection: "ASC"
+      sortDirection: "ASC",
+      // alphabets:['A','B','C','D','E','F','G','H','I','J','K']
     };
   },
 
   created() {
     this.getContacts();
+       
   },
+
   computed: {
     filterContacts: function() {
-      this.sortCompaniesByName();
+      console.log(this.contacts,"filter");
+      
       return this.contacts.filter(c => {
         return c.name.match(this.search);
       });
@@ -258,6 +292,7 @@ export default {
       });
     },
     editContact: function(econtact) {
+      econtact.uemail=localStorage.getItem("user")
       console.log(econtact);
       this.editedContact = econtact;
     },
@@ -281,22 +316,25 @@ export default {
     },
     addcontact: function(addContact) {
       console.log(addContact);
-
+      addContact.uemail=localStorage.getItem("user");
       this.$http
         .post("http://localhost:3000/api/addcontact", {
           addContact
         })
-        .then(() => {})
+        .then((data) => {
+           window.location.reload();
+        })
         .catch(function(error) {
           console.error(error.response);
         });
     },
     getContacts: function() {
+      let uemai=localStorage.getItem("user");
       this.$http
-        .get("http://localhost:3000/api/getcontact")
+        .get("http://localhost:3000/api/getcontact/"+uemai)
         .then(function(data) {
-          console.log(data.body);
-          this.contacts = data.body;
+          console.log(data.body.contact,"get data");
+          this.contacts = data.body.contact;
         });
     },
     showsearch() {

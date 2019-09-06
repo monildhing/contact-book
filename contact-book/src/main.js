@@ -4,6 +4,7 @@ import App from "./App.vue";
 
 import  router  from  './router'
 import VueResource from 'vue-resource'
+import Vuelidate from 'vuelidate'
 // import Axios from 'axios'
 
 // Vue.prototype.$http = Axios;
@@ -13,6 +14,7 @@ import VueResource from 'vue-resource'
 // }
 
 Vue.use(VueResource)
+Vue.use(Vuelidate)
 export const bus=new Vue()
 
 new Vue({

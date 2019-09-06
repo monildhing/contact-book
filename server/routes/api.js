@@ -41,22 +41,23 @@ router.post('/register', (req, res) => {
     })
 })
 router.post('/addcontact', (req, res) => {
-    console.log(req)
-    let contactData = req.body.addContact
-    let contact = new Contact(contactData)
-    contact.save((err, cont) => {
+    console.log(req );
+    
+    User.findOneAndUpdate({'email':req.body.addContact.uemail}, { $push: { contact: req.body.addContact }},(err,data)=>{
         if (err) {
             console.log(err)
         } else {
-            console.log(cont)
-            console.log("user created");
-            res.send(cont)
+            console.log("added");
+            
+            res.send(data)
         }
-
     })
+    
 })
-router.get('/getcontact', (req, res) => {
-    Contact.find({}, (err, data) => {
+router.get('/getcontact/:user', (req, res) => {
+    console.log(req.params.user,"tdgd");
+    
+    User.findOne({'email':req.params.user}, (err, data) => {
         if (err) {
             console.log(err)
         } else {
@@ -68,10 +69,10 @@ router.get('/getcontact', (req, res) => {
 /* Update */
 
 router.post('/updatecontact', (req, res) => {
-    Contact.findOneAndUpdate({
-        _id: req.body.editcontact._id
+    User.findOneAndUpdate({
+            'contact._id': req.body.editcontact._id
     }, {
-        $set: req.body.editcontact
+        $set: {contact:req.body.editcontact}
     }, {
         new: true
     }, (err, data) => {

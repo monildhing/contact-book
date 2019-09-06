@@ -1,13 +1,13 @@
-import store from './store.js'
+
 import addcontact from "./components/addcontact.vue"
 import dashboard from "./components/dashboard.vue"
 import hello from "./components/HelloWorld.vue"
 import login from "./components/login.vue"
 import register from "./components/register.vue"
 import Router from 'vue-router'
-import logout from './components/logout'
+
 import Vue from 'vue';
-import AuthGuard from './authguard'
+
 import editcontact from './components/editcontact.vue'
 
 Vue.use(Router)
@@ -29,14 +29,14 @@ const router = new Router({
         requiresAuth: false
       }
     },
-    {
-      path: '/register',
+    // {
+    //   path: '/register',
 
-      component: register,
-      meta: {
-        guest: true
-      }
-    },
+    //   component: register,
+    //   meta: {
+    //     guest: true
+    //   }
+    // },
     {
       path: '/dashboard',
 
@@ -46,18 +46,18 @@ const router = new Router({
       }
 
     },
-    {
-      path: '/addcontact',
+    // {
+    //   path: '/addcontact',
 
-      component: addcontact,
+    //   component: addcontact,
 
-    },
-    {
-      path: '/editcontact',
+    // },
+    // {
+    //   path: '/editcontact',
 
-      component: editcontact,
+    //   component: editcontact,
 
-    }
+    // }
 
   ],
 
