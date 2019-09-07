@@ -61,7 +61,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="handleSubmit(e)"
+              v-on:click="save(editedContact)"
             >Save changes</button>
           </div>
         </div>
@@ -90,27 +90,27 @@
               <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" v-model="addContact.name" class="form-control" id="name" :class="{ 'is-invalid':submitted && $v.addContact.name.$error }"  />
-                <div v-if=" !$v.addContact.name.error" class="invalid-feedback">
+                <!-- <div v-if=" !$v.addContact.name.error" class="invalid-feedback">
                   <span v-if="!$v.addContact.name.required">Name is required</span>
                   <span v-if="!$v.addContact.name.minLength">Name must be at least 3 characters</span>
                   <span v-if="!$v.addContact.name.maxLength">Name can't be more than 20 charcters</span>
-                </div>
+                </div> -->
               </div>
               <div class="form-group">
                 <label for="phone">Phone</label>
                 <input type="text" v-model="addContact.phone" class="form-control" id="phone"  :class="{ 'is-invalid':submitted && $v.addContact.phone.$error }" />
-                 <div v-if="!$v.addContact.phone.error" class="invalid-feedback">
+                 <!-- <div v-if="!$v.addContact.phone.error" class="invalid-feedback">
                   <span v-if="!$v.addContact.phone.required">contact is required</span>
                   <span v-if="!$v.addContact.phone.alpha">contact must valid</span>
-                </div>
+                </div> -->
               </div>
               <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" v-model="addContact.email" class="form-control" id="email" :class="{ 'is-invalid':submitted && $v.addContact.email.$error }" />
-                <div v-if="$v.addContact.email.$error" class="invalid-feedback">
+                <!-- <div v-if="$v.addContact.email.$error" class="invalid-feedback">
                   <span v-if="!$v.addContact.email.required">Email is required</span>
                   <span v-if="!$v.addContact.email.email">Email is invalid</span>
-                </div>
+                </div> -->
               </div>
               <div class="form-group">
                 <label for="address">Address</label>
@@ -203,15 +203,15 @@
     <br />
     <div class="main">
       <br />
-      <div>
-        <table>
+      <div >
+        <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Option</th>
+              <th scope="col">Name</th>
+              <th scope="col">Contact</th>
+              <!-- <th>Email</th>
+              <th>Address</th> -->
+              <th scope="col">Option</th>
             </tr>
           </thead>
           <tbody>
@@ -220,17 +220,17 @@
                 <strong class="contact-name">{{contact.name}}</strong>
               </td>
               <td data-toggle="modal" data-target="#exampleModal2">{{contact.phone}}</td>
-              <td data-toggle="modal" data-target="#exampleModal2">{{contact.email}}</td>
-              <td data-toggle="modal" data-target="#exampleModal2">{{contact.address}}</td>
+              <!-- <td data-toggle="modal" data-target="#exampleModal2">{{contact.email}}</td>
+              <td data-toggle="modal" data-target="#exampleModal2">{{contact.address}}</td> -->
               <td>
-                <button
+                <button id="space"
                   type="button"
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#exampleModal"
                   v-on:click="editContact(contact)"
-                ><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</button>
-                <button class="btn btn-primary" v-on:click="deleteContact(contact)"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+                ><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>
+                <button class="btn btn-primary" v-on:click="deleteContact(contact)"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
                 <!-- <button class="btn-c" v-on:click="editContact(contact)">Edit</button> -->
               </td>
             </tr>
@@ -368,7 +368,7 @@ export default {
         .then(data => {
           console.log(data);
 
-          this.$router.push("/dashboard");
+          window.location.reload();
         })
         .catch(function(error) {
           console.error(error.response);
@@ -393,9 +393,11 @@ export default {
         });
     },
     getContacts: function() {
+      console.log("inside  get");
+      
       let uemai=localStorage.getItem("user");
       this.$http
-        .get("http://localhost:3000/api/getcontact/"+uemai)
+        .get(`http://localhost:3000/api/getcontact/${uemai}`)
         .then(function(data) {
           console.log(data.body.contact,"get data");
           this.contacts = data.body.contact;
@@ -407,3 +409,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+#space{
+  margin-right: 5px;
+}
+</style>

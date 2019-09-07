@@ -7,7 +7,7 @@ const Contact = require('../models/contacts')
 const User = require('../models/users')
 
 const db = 'mongodb+srv://admin:admin@oauth-test-rfs2q.mongodb.net/test?retryWrites=true&w=majority'
-mongoose.connect(db, err => {
+mongoose.connect(db,{ useFindAndModify: false }, err => {
     if (err) {
         console.log('error db')
     } else {
@@ -69,10 +69,12 @@ router.get('/getcontact/:user', (req, res) => {
 /* Update */
 
 router.post('/updatecontact', (req, res) => {
+    console.log(req.body);
     User.findOneAndUpdate({
-            'contact._id': req.body.editcontact._id
+            email: req.body.editcontact.uemail,
+            contact:{$elemMatch:{_id:req.body.editcontact._id}} 
     }, {
-        $set: {contact:req.body.editcontact}
+        $set : {"contact.$":req.body.editcontact}
     }, {
         new: true
     }, (err, data) => {
@@ -152,13 +154,13 @@ router.post('/login', (req, res) => {
         }
     })
 })
-router.post('/delete', function (req, res, next) {
-   deletecontact(req, res);
+router.post('/delete', function (req, res,next) {
+   deletecontact(req, res,next);
 });
-async function deletecontact(req, res) {
+async function deletecontact(req, res,next) {
     console.log(req.body,"delete");
     
-    User.findOneAndUpdate({'contact._id': req.body.id._id},{$pull: { contact: { $in: req.body.id._id } }} ,function (err) {
+    User.findOneAndUpdate({'email': req.body.id.uemail},{$pull: { contact:  req.body.id } } ,function (err) {
         if (err) return next(err);
         res.send('Deleted successfully!');
     })
