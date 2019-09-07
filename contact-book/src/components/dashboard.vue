@@ -152,6 +152,19 @@
               <h6><i class="fas fa-phone-alt"></i>{{editedContact.phone}}</h6>
               <h6><i class="fas fa-envelope-open-text"></i>{{editedContact.email}}</h6>
               <h6><i class="fas fa-home"></i>{{editedContact.address}}</h6>
+
+          </div>
+          <div>
+            <button id="space"
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal"
+                  data-toggle="modal"
+
+                  data-target="#exampleModal"
+                  v-on:click="editContact(editedContact)"
+                ><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>
+                <button class="btn btn-primary" v-on:click="deleteContact(editedContact)" data-dismiss="modal"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
           </div>
           
         </div>
@@ -171,9 +184,10 @@
        <button
           type="button"
           class="btn btn-primary"
+          id="nav-btn"
           data-toggle="modal"
           data-target="#exampleModal1"
-        ><i class="fa fa-user-plus" aria-hidden="true"></i></button>
+        ><i class="fa fa-user-plus" aria-hidden="true"></i> Add Contact</button>
       </li>
       <li class="nav-item">    
         <button  class="btn btn-primary" v-on:click="logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
@@ -411,6 +425,9 @@ export default {
 </script>
 <style scoped>
 #space{
+  margin-right: 5px;
+}
+#nav-btn{
   margin-right: 5px;
 }
 </style>
