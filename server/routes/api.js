@@ -3,8 +3,9 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const app = express()
-const Contact = require('../models/contacts')
+
 const User = require('../models/users')
+
 
 const db = 'mongodb+srv://admin:admin@oauth-test-rfs2q.mongodb.net/test?retryWrites=true&w=majority'
 mongoose.connect(db,{ useFindAndModify: false }, err => {
@@ -19,6 +20,7 @@ mongoose.connect(db,{ useFindAndModify: false }, err => {
         res.send('from api route')
     })
 })
+
 router.post('/register', (req, res) => {
     let userData = req.body
     let user = new User(userData)
@@ -127,6 +129,7 @@ router.post('/updatecontact', (req, res) => {
 router.post('/login', (req, res) => {
     let userData = req.body
     console.log(userData)
+    
     User.findOne({
         email: userData.email
     }, (error, user) => {
