@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const app = express()
 
 const User = require('../models/users')
-
+const nodemailer = require('nodemailer');
 
 const db = 'mongodb+srv://admin:admin@oauth-test-rfs2q.mongodb.net/test?retryWrites=true&w=majority'
 mongoose.connect(db,{ useFindAndModify: false }, err => {
@@ -125,6 +125,87 @@ router.post('/updatecontact', (req, res) => {
 //         return res.status(501).json(err);
 //     }
 // }
+router.post('/forgot',(req,res)=>{
+    console.log(req);
+     
+        
+        User.findOne({email: req.body.femail}, (err, data) => {
+            if (err) {
+                console.log(err)
+            } else {
+                password=data.password;
+                femail=req.body.femail;
+                let transporter = nodemailer.createTransport({
+                    host: "smtp.gmail.com", // hostname
+                    secureConnection: true, // use SSL
+                    port: 465, // port for secure SMTP
+                    auth: {
+                        user: "monildhing8@gmail.com",
+                        pass: "luck@2112"
+                    }
+                });
+                let customHtml = "<html>\n\
+                <body>\n\
+                <table>\n\
+                <tr>\n\
+                <td>Email: </td>" + req.body.femail + "<td></td>\n\
+                </tr>\n\
+                <tr>\n\
+                <td>Password: </td><td>" +data.password + "</td>\n\
+                </tr>\n\
+                \n\
+                </table></body></html>";
+
+                let info =  transporter.sendMail({
+                    from: '"monildhing8@gmail.com', // sender address
+                    to: femail, // list of receivers
+                    subject: "Your password is "+password, // Subject line
+                    text: password, // plain text body
+                    html: customHtml // html body
+                });
+                
+            }
+        })
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+    
+        // // create reusable transporter object using the default SMTP transport
+        // let transporter = nodemailer.createTransport({
+        //     host: "smtp.gmail.com",
+        //     port: 465,
+        //     secure: true, // true for 465, false for other ports
+        //     auth: {
+        //         user: 'monildhing8@gmail.com', // generated ethereal user
+        //         pass: 'luck@2112' // generated ethereal password
+        //     }
+        // })
+
+    //     let transporter = nodemailer.createTransport({
+    //         host: "smtp.gmail.com", // hostname
+    //         secureConnection: true, // use SSL
+    //         port: 465, // port for secure SMTP
+    //         auth: {
+    //             user: "monildhing8@gmail.com",
+    //             pass: "luck@2112"
+    //         }
+    //     });
+
+    //     let info = await transporter.sendMail({
+    //         from: '"monildhing8@gmail.com', // sender address
+    //         to: 'monildhing80@gmail.com', // list of receivers
+    //         subject: this.pas, // Subject line
+    //         text: this.password, // plain text body
+    //         html: '<b>Hello world?</b>' // html body
+    //     });
+    //     console.log('Message sent: %s', info.messageId);
+    //     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+    
+    //     // Preview only available when sending through an Ethereal account
+    //     console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    //     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+    // }
+    // main().catch(console.error);
+    })
 
 router.post('/login', (req, res) => {
     let userData = req.body
