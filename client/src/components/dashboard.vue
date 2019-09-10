@@ -14,7 +14,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Edit Contact</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal"  v-on:click="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -57,11 +57,12 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="close">Close</button>
             <button
               type="button"
               class="btn btn-primary"
-              v-on:click="save(editedContact)"
+              v-on:click="handleSubmit  (e,editedContact)" 
+              data-dismiss="modal"
             >Save changes</button>
           </div>
         </div>
@@ -124,6 +125,7 @@
               type="button"
               class="btn btn-primary"
               v-on:click="handleAddSubmit(e)"
+              data-dismiss="modal"
             >Save changes</button>
           </div>
         </div>
@@ -257,7 +259,7 @@
 
 <script>
 import {  required, email, minLength, maxLength,helpers  } from 'vuelidate/lib/validators'
-const alpha = helpers.regex('alpha', /\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*/)
+const alpha = helpers.regex('alpha', /^(\+91[\-\s]?)?[0]?(91)?[789]\d{9}$/)
 
 export default {
   name: "dashboard",
@@ -323,6 +325,9 @@ export default {
     }
   },
   methods: {
+    close: function(){
+      this.getContacts()
+    },
     sortCompaniesByName: function() {
       this.contacts.sort(
         function(a, b) {
@@ -336,14 +341,14 @@ export default {
         }.bind(this)
       );
     },
-    handleSubmit:function(e) {
+    handleSubmit:function(e,editContact) {
      this.submitted = true;
      // stop here if form is invalid
      this.$v.editedContact.$touch();
      if (this.$v.editedContact.$invalid) {
        return;
      }
-     this.save(this.editContact);
+     this.save(editContact);
    },
    handleAddSubmit:function(e) {
      this.submitted = true;
@@ -356,11 +361,12 @@ export default {
    },
     deleteContact: function(id) {
       console.log(id);
-      let url = "http://localhost:3000/api/delete/" ;
+      let url = "http://192.1.200.61:3000/api/delete/" ;
       this.$http.post(url, {
           id
         }).then(() => {
         this.getContacts();
+        this.$toaster.success('Contact Deleted.')
         // this.$http
         // .get("http://localhost:3000/api/getcontact")
         // .then(function(data) {
@@ -378,11 +384,11 @@ export default {
       console.log(editcontact, "Save");
 
       this.$http
-        .post("http://localhost:3000/api/updatecontact", { editcontact })
+        .post("http://192.1.200.61:3000/api/updatecontact", { editcontact })
         .then(data => {
           console.log(data);
-
-          window.location.reload();
+          this.$toaster.success('Contact Edited.')
+          this.getContacts()
         })
         .catch(function(error) {
           console.error(error.response);
@@ -396,14 +402,16 @@ export default {
       console.log(addContact);
       addContact.uemail=localStorage.getItem("user");
       this.$http
-        .post("http://localhost:3000/api/addcontact", {
+        .post("http://192.1.200.61:3000/api/addcontact", {
           addContact
         })
         .then((data) => {
-           window.location.reload();
+           this.getContacts();
+           this.$toaster.success('Contact Added.')
         })
         .catch(function(error) {
           console.error(error.response);
+          this.$toaster.error('Contacts cant be added')
         });
     },
     getContacts: function() {
@@ -411,11 +419,17 @@ export default {
       
       let uemai=localStorage.getItem("user");
       this.$http
-        .get(`http://localhost:3000/api/getcontact/${uemai}`)
+        .get(`http://192.1.200.61:3000/api/getcontact/${uemai}`)
         .then(function(data) {
+          if(data.body.contact.length==0){
+             this.$toaster.info('No contacts')
+          }
           console.log(data.body.contact,"get data");
           this.contacts = data.body.contact;
-        });
+        })  .catch(function(error) {
+        console.error(error.response);
+        this.$toaster.error('Contacts cant be fetched')
+      });
     },
     showsearch() {
       console.log(this.search);
